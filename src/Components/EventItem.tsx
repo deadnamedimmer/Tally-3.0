@@ -10,13 +10,13 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 interface EventItemProps {
   value: any;
-  index: number;
+  id: String;
   removeItem: Function;
 }
 
 const EventItem: React.FunctionComponent<EventItemProps> = ({
   value,
-  index,
+  id,
   removeItem,
 }) => {
   return (
@@ -34,7 +34,7 @@ const EventItem: React.FunctionComponent<EventItemProps> = ({
           edge="end"
           aria-label="delete"
           onClick={() => {
-            removeItem(index);
+            removeItem(id);
           }}
         >
           <DeleteIcon />

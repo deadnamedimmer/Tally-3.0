@@ -1,22 +1,45 @@
 import React, { Fragment } from "react";
-import { Grid, Button, List } from "@material-ui/core";
+import { Grid, Button, List, Snackbar } from "@material-ui/core";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 import EventItem from "./EventItem";
 
+import api from "../api/index";
+
 interface AddProps {
   data: any;
-  addItem: Function;
   removeItem: Function;
 }
 
-const AddPage: React.FunctionComponent<AddProps> = ({
-  data,
-  addItem,
-  removeItem,
-}) => {
-  const add = (dateTime: String, type: String) => {
-    addItem({ dateTime, type });
-    console.log(data);
+const AddPage: React.FunctionComponent<AddProps> = ({ data, removeItem }) => {
+  const add = (type: String) => {
+    let timestamp = new Date().toLocaleString();
+    // console.log(timestamp);
+
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, "0");
+    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    let yyyy = today.getFullYear();
+
+    let date = yyyy + "/" + mm + "/" + dd;
+
+    let time =
+      String(today.getHours()).padStart(2, "0") +
+      ":" +
+      String(today.getMinutes()).padStart(2, "0") +
+      ":" +
+      String(today.getSeconds()).padStart(2, "0");
+
+    //console.log(date);
+    // console.log(time);
+    api.insertEvent({
+      date: date,
+      time: time,
+      type: type,
+      timestamp: timestamp,
+    });
+    // addItem({ date, time, type, timestamp });
+    // console.log(data);
   };
   const buttonTypes = [
     "Reference Question",
@@ -29,6 +52,18 @@ const AddPage: React.FunctionComponent<AddProps> = ({
     "Game Computer",
     "Other",
   ];
+
+  const [open, setOpen] = React.useState(false);
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
 
   return (
     <Fragment>
@@ -51,9 +86,8 @@ const AddPage: React.FunctionComponent<AddProps> = ({
                     variant={"contained"}
                     style={{ width: "100%" }}
                     onClick={() => {
-                      let date = new Date().toLocaleString();
-                      add(date, value);
-                      console.log(date);
+                      add(value);
+                      setOpen(true);
                     }}
                   >
                     {value}
@@ -76,7 +110,7 @@ const AddPage: React.FunctionComponent<AddProps> = ({
               return (
                 <EventItem
                   value={value}
-                  index={index}
+                  id={value.id}
                   removeItem={removeItem}
                 ></EventItem>
               );
@@ -84,6 +118,11 @@ const AddPage: React.FunctionComponent<AddProps> = ({
           </List>
         </Grid>
       </Grid>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success">
+          Event logged
+        </Alert>
+      </Snackbar>
     </Fragment>
   );
 };
