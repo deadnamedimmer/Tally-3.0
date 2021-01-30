@@ -13,7 +13,7 @@ import StatsPage from "./StatsPage";
 import socketIOClient from "socket.io-client";
 import api from "../api/index";
 
-const ENDPOINT = "http://127.0.0.1:3000";
+const ENDPOINT = "https://tally.cidlibrary.org:3000";
 
 export enum PAGES {
   ADD,
@@ -74,8 +74,8 @@ function App() {
       <Box style={{ height: "100vh" }}>
         <AppBar position="sticky">
           <Toolbar>
-            <Typography variant="h6" style={{ marginRight: "auto" }}>
-              Tally 3.0
+            <Typography variant="h4" style={{ marginRight: "auto" }}>
+              <b>CIDL</b>
             </Typography>
             <Typography variant="h6" style={{ marginRight: "auto" }}>
               {number} requests served today
@@ -104,15 +104,21 @@ function App() {
             )}
           </Toolbar>
         </AppBar>
-        <Box style={{ marginTop: "20px" }}></Box>
         {page === PAGES.ADD && (
           <Box style={{ width: "100vw" }}>
             <AddPage data={data} removeItem={removeItem}></AddPage>
           </Box>
         )}
         {page === PAGES.STATS && (
+        <Fragment>
+          <Box style={{ marginTop: "20px" }}></Box>
           <StatsPage data={data} removeItem={removeItem}></StatsPage>
+        </Fragment>
         )}
+        <Toolbar>
+          <Typography variant="h6" style={{marginLeft: "auto", marginRight: "auto"}}>Tally 3.2: built by Nathan Dimmer
+          </Typography>
+        </Toolbar>
       </Box>
     </Fragment>
   );

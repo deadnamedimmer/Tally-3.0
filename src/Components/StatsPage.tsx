@@ -29,6 +29,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
   const [table, setTable] = React.useState([]);
   const [display, setDisplay] = React.useState(false);
   const [total, setTotal] = React.useState(0);
+  const [copyExport, setCopyExport] = React.useState(false);
 
   const handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setType(event.target.value as string);
@@ -41,6 +42,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
   const buttonTypes = [
     "Select All",
     "Reference Question",
+    "Program Question",
     "Guest Pass",
     "Technology Question",
     "Reader's Advisory",
@@ -129,6 +131,10 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
     setTotal(tempTotal);
   };
 
+  let toggleCopyExport = () => {
+    setCopyExport(!copyExport);
+  };
+
   return (
     <Fragment>
       <Grid
@@ -181,6 +187,15 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
           >
             Submit
           </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              toggleCopyExport();
+            }}
+          >
+            Export
+          </Button>
+
         </Grid>
         <Grid item xs={9}>
           <table
@@ -193,13 +208,13 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
             }}
           >
             <thead>
-              <tr style={{ border: "1px solid black" }}>
-                <th style={{ border: "1px solid black" }} colSpan={2}>
+              {!copyExport && <tr style={{ border: "1px solid black" }}>
+                <th style={{ border: "1px solid black"  }} colSpan={2}>
                   {type}
                 </th>
-              </tr>
+              </tr> }
               <tr style={{ border: "1px solid black" }}>
-                <th style={{ border: "1px solid black" }}>Date</th>
+                {!copyExport && <th style={{ border: "1px solid black" }}>Date</th> }
                 <th style={{ border: "1px solid black" }}>Number</th>
               </tr>
             </thead>
@@ -208,21 +223,21 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
                 table.map((value: any, index: number) => {
                   return (
                     <tr style={{ border: "1px solid black" }}>
-                      <td style={{ border: "1px solid black" }}>
+                     {!copyExport && <td style={{ border: "1px solid black" }}>
                         {value.date}
-                      </td>
+                      </td> }
                       <td style={{ border: "1px solid black" }}>
                         {value.number}
                       </td>
                     </tr>
                   );
                 })}
-              <tr>
+              {!copyExport &&<tr>
                 <td style={{ border: "1px solid black" }}>Total: </td>
                 <td style={{ border: "1px solid black" }} onLoad={getTotal}>
                   {total}
                 </td>
-              </tr>
+              </tr> }
             </tbody>
           </table>
         </Grid>

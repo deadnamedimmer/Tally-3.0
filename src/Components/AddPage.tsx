@@ -43,6 +43,7 @@ const AddPage: React.FunctionComponent<AddProps> = ({ data, removeItem }) => {
   };
   const buttonTypes = [
     "Reference Question",
+    "Program Question",
     "Guest Pass",
     "Technology Question",
     "Reader's Advisory",
@@ -76,7 +77,7 @@ const AddPage: React.FunctionComponent<AddProps> = ({ data, removeItem }) => {
           <Grid
             container
             direction="column"
-            style={{ overflowY: "auto", height: "calc(100vh - 100px)" }}
+            style={{ overflowY: "auto", height: "calc(100vh - 130px)" }}
             justify="space-around"
           >
             {buttonTypes.map((value, index) => {

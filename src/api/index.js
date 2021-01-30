@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+//  baseURL: "https://172.16.0.129:3000/api",
+  baseURL: "https://tally.cidlibrary.org:3000/api",
 });
 
 export const insertEvent = (payload) => api.post(`/event`, payload);
