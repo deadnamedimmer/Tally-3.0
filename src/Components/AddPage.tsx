@@ -52,6 +52,7 @@ const AddPage: React.FunctionComponent<AddProps> = ({ data, removeItem }) => {
     "Referral",
     "Game Computer",
     "Other",
+    "Curbside Service",
   ];
 
   const [open, setOpen] = React.useState(false);

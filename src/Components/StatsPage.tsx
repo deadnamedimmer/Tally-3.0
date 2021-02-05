@@ -51,6 +51,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
     "Referral",
     "Game Computer",
     "Other",
+    "Curbside Service",
   ];
 
   const getDate = (date: Date) => {
