@@ -25,7 +25,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
   const [fromDate, handleFromDateChange] = React.useState(new Date());
   const [toDate, handleToDateChange] = React.useState(new Date());
   const [type, setType] = React.useState("Select All");
-  const [results, setResults] = React.useState([]);
+  // const [results, setResults] = React.useState([]);
   const [table, setTable] = React.useState([]);
   const [display, setDisplay] = React.useState(false);
   const [total, setTotal] = React.useState(0);
@@ -52,6 +52,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
     "Game Computer",
     "Other",
     "Curbside Service",
+    "All Except Curbside",
   ];
 
   const getDate = (date: Date) => {
@@ -79,49 +80,82 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
     let date2 = getDate(toDate);
 
     let searchTerms = { date1, date2, type };
+    if (type !== "All Except Curbside") {
+      api.search(searchTerms).then((response) => {
+        let dates = getDates(date1, date2);
+        let numbers = dates.map((value: String, index: number) => {
+          return 0;
+        });
+        for (let i = 0; i < response.data.body.length; i++) {
+          numbers[dates.indexOf(response.data.body[i].date)]++;
+        }
+        let newTable = dates.map((value: String, index: number) => {
+          return { date: value, number: numbers[index] };
+        });
+        setTable(newTable);
+        getTotal(newTable);
+        setDisplay(true);
+        // if (response.data.body.length === 0) {
+        //   setDisplay(false);
+        // } else {
+        //   let currentDate;
+        //   let number;
+        //   let newTable = [];
+        //   for (let i = 0; i < response.data.body.length; i++) {
+        //     console.log(response.data.body[i].date);
+        //     if (i === 0) {
+        //       currentDate = response.data.body[i].date;
+        //       number = 1;
+        //     } else if (response.data.body[i].date === currentDate) {
+        //       number++;
+        //     } else if (response.data.body[i].date !== currentDate) {
+        //       currentDate = response.data.body[i].date;
+        //       number = 1;
+        //       newTable.push({ currentDate, number });
+        //     } else if (i === response.data.body.length - 1) {
+        //       newTable.push({ currentDate, number });
+        //     }
+        //     newTable.push({ currentDate, number });
+        //   }
+        //   console.log(newTable);
+        //   setTable(newTable);
+        //   setDisplay(true);
+        // }
+      });
+    } else {
+      let results = [];
+      api
+        .search({ date1, date2, "Curbside Service": String })
+        .then((response) => {
+          let dates = getDates(date1, date2);
+          let numbers = dates.map((value: String, index: number) => {
+            return 0;
+          });
+          for (let i = 0; i < response.data.body.length; i++) {
+            numbers[dates.indexOf(response.data.body[i].date)]++;
+          }
+          let newTable = dates.map((value: String, index: number) => {
+            return { date: value, number: numbers[index] };
+          });
+          results = newTable.slice();
+        });
 
-    api.search(searchTerms).then((response) => {
-      setResults(response.data.body);
-      let dates = getDates(date1, date2);
-      let numbers = dates.map((value: String, index: number) => {
-        return 0;
+      api.search(searchTerms).then((response) => {
+        let dates = getDates(date1, date2);
+        let numbers = dates.map((value: String, index: number) => {
+          return 0;
+        });
+        for (let i = 0; i < response.data.body.length; i++) {
+          numbers[dates.indexOf(response.data.body[i].date)]++;
+        }
+        let newTable = dates.map((value: String, index: number) => {
+          return { date: value, number: numbers[index] - results[index] };
+        });
+        setTable(newTable);
+        getTotal(newTable);
+        setDisplay(true);
       });
-      for (let i = 0; i < response.data.body.length; i++) {
-        numbers[dates.indexOf(response.data.body[i].date)]++;
-      }
-      let newTable = dates.map((value: String, index: number) => {
-        return { date: value, number: numbers[index] };
-      });
-      setTable(newTable);
-      getTotal(newTable);
-      setDisplay(true);
-      // if (response.data.body.length === 0) {
-      //   setDisplay(false);
-      // } else {
-      //   let currentDate;
-      //   let number;
-      //   let newTable = [];
-      //   for (let i = 0; i < response.data.body.length; i++) {
-      //     console.log(response.data.body[i].date);
-      //     if (i === 0) {
-      //       currentDate = response.data.body[i].date;
-      //       number = 1;
-      //     } else if (response.data.body[i].date === currentDate) {
-      //       number++;
-      //     } else if (response.data.body[i].date !== currentDate) {
-      //       currentDate = response.data.body[i].date;
-      //       number = 1;
-      //       newTable.push({ currentDate, number });
-      //     } else if (i === response.data.body.length - 1) {
-      //       newTable.push({ currentDate, number });
-      //     }
-      //     newTable.push({ currentDate, number });
-      //   }
-      //   console.log(newTable);
-      //   setTable(newTable);
-      //   setDisplay(true);
-      // }
-    });
+    }
   };
 
   let getTotal = (table) => {
@@ -196,7 +230,6 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
           >
             Export
           </Button>
-
         </Grid>
         <Grid item xs={9}>
           <table
@@ -209,13 +242,17 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
             }}
           >
             <thead>
-              {!copyExport && <tr style={{ border: "1px solid black" }}>
-                <th style={{ border: "1px solid black"  }} colSpan={2}>
-                  {type}
-                </th>
-              </tr> }
+              {!copyExport && (
+                <tr style={{ border: "1px solid black" }}>
+                  <th style={{ border: "1px solid black" }} colSpan={2}>
+                    {type}
+                  </th>
+                </tr>
+              )}
               <tr style={{ border: "1px solid black" }}>
-                {!copyExport && <th style={{ border: "1px solid black" }}>Date</th> }
+                {!copyExport && (
+                  <th style={{ border: "1px solid black" }}>Date</th>
+                )}
                 <th style={{ border: "1px solid black" }}>Number</th>
               </tr>
             </thead>
@@ -224,21 +261,25 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
                 table.map((value: any, index: number) => {
                   return (
                     <tr style={{ border: "1px solid black" }}>
-                     {!copyExport && <td style={{ border: "1px solid black" }}>
-                        {value.date}
-                      </td> }
+                      {!copyExport && (
+                        <td style={{ border: "1px solid black" }}>
+                          {value.date}
+                        </td>
+                      )}
                       <td style={{ border: "1px solid black" }}>
                         {value.number}
                       </td>
                     </tr>
                   );
                 })}
-              {!copyExport &&<tr>
-                <td style={{ border: "1px solid black" }}>Total: </td>
-                <td style={{ border: "1px solid black" }} onLoad={getTotal}>
-                  {total}
-                </td>
-              </tr> }
+              {!copyExport && (
+                <tr>
+                  <td style={{ border: "1px solid black" }}>Total: </td>
+                  <td style={{ border: "1px solid black" }} onLoad={getTotal}>
+                    {total}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </Grid>
