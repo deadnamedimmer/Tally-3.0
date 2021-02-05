@@ -149,7 +149,10 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
           numbers[dates.indexOf(response.data.body[i].date)]++;
         }
         let newTable = dates.map((value: String, index: number) => {
-          return { date: value, number: numbers[index] - results[index] };
+          return {
+            date: value,
+            number: numbers[index] - parseInt(results[index]),
+          };
         });
         setTable(newTable);
         getTotal(newTable);
