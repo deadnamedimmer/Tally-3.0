@@ -123,7 +123,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
         // }
       });
     } else {
-      let results = [];
+      let results: { date: String; number: number }[] = [];
       api
         .search({ date1, date2, "Curbside Service": String })
         .then((response) => {
@@ -151,7 +151,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
         let newTable = dates.map((value: String, index: number) => {
           return {
             date: value,
-            number: numbers[index] - parseInt(results[index]),
+            number: numbers[index] - results[index].number,
           };
         });
         setTable(newTable);
