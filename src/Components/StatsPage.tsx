@@ -151,7 +151,7 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
         let newTable = dates.map((value: String, index: number) => {
           return {
             date: value,
-            number: +numbers[index] - +results[index].number,
+            number: numbers[index] - +results[index].number,
           };
         });
         setTable(newTable);
