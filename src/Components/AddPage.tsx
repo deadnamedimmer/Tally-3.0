@@ -53,6 +53,8 @@ const AddPage: React.FunctionComponent<AddProps> = ({ data, removeItem }) => {
     "Game Computer",
     "Other",
     "Curbside Service",
+    "Study Room",
+    "Adult Summer Reading Reg",
   ];
 
   const [open, setOpen] = React.useState(false);

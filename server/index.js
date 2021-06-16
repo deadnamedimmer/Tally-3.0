@@ -1,7 +1,8 @@
+const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const http = require("http");
+const https = require("https");
 const socketIo = require("socket.io");
 
 const db = require("./db");
@@ -28,7 +29,18 @@ app.get("/", (req, res) => {
 
 app.use("/api", eventRouter);
 
-const server = http.createServer(app);
+const server = https.createServer({
+	key: fs.readFileSync("/etc/letsencrypt/live/tally.cidlibrary.org/privkey.pem"),
+	cert: fs.readFileSync("/etc/letsencrypt/live/tally.cidlibrary.org/fullchain.pem"),
+	ciphers: [
+		"ECDHE-RSA-AES128-SHA256",
+		"DHE-RSA-AES128-SHA256",
+		"RC4",
+		"HIGH",
+		"!MD5",
+		"!aNULL"
+	].join(':'),
+}, app);
 
 const io = socketIo(server);
 
@@ -37,7 +49,6 @@ const io = socketIo(server);
 // let interval;
 
 io.on("connection", (socket) => {
-  console.log("New client connected");
 
   socket.emit("Update")
 
@@ -57,7 +68,6 @@ io.on("connection", (socket) => {
 
 
   socket.on("disconnect", () => {
-    console.log("Client disconnected");
     // clearInterval(interval);
   });
 });

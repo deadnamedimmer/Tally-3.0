@@ -52,6 +52,8 @@ const StatsPage: React.FunctionComponent<StatsProps> = ({
     "Game Computer",
     "Other",
     "Curbside Service",
+    "Study Room",
+    "Adult Summer Reading Reg",
     "All Except Curbside",
   ];
 
